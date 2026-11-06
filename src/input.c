@@ -40,7 +40,6 @@ input_dequeue(void)
 	return input_queue.buffer[idx];
 }
 
-#if 0
 static uint8_t
 input_peek(void)
 {
@@ -52,6 +51,7 @@ input_peek(void)
 	return input_queue.buffer[input_queue.head];
 }
 
+#if 0
 static void
 input_discard(void)
 {

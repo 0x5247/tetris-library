@@ -32,17 +32,39 @@ handle_input(void)
 			break;
 		}
 
-		// todo: ability to combine rotate and right/left movement
 		switch (input)
 		{
 		case ROTATE:
-			tetrino_rotate();
+			if (input_peek() == LEFT || input_peek() == RIGHT)
+			{
+				tetrino_move_rotate(input_dequeue() == LEFT ? -1 : 1, true);
+			}
+			else
+			{
+				tetrino_rotate();
+			}
 			break;
 		case LEFT:
-			tetrino_move_left();
+			if (input_peek() == ROTATE)
+			{
+				input_dequeue();
+				tetrino_move_rotate(-1, false);
+			}
+			else
+			{
+				tetrino_move_left();
+			}
 			break;
 		case RIGHT:
-			tetrino_move_right();
+			if (input_peek() == ROTATE)
+			{
+				input_dequeue();
+				tetrino_move_rotate(1, false);
+			}
+			else
+			{
+				tetrino_move_right();
+			}
 			break;
 		case DOWN:
 			tetrino_move_down();
@@ -60,8 +82,9 @@ input_ticker(float dt)
 	static float at = 0;
 	at += dt;
 
-	return at >= 0.01f ? (at = 0, true) : false;
-	// todo:       ^ make sure if this interval is ok
+	return at >= 0.05f ? (at = 0, true) : false;
+	// todo:       ^ this interval has to be small enough to be not noticable
+	//               and big enough to let at least two input in a single frame
 }
 
 static bool
@@ -79,7 +102,7 @@ update(float dt)
 	/*
 	 * with this method first two terinos
 	 * will always be the same but it'll
-   * be fixed when implementing menu
+	 * be fixed when implementing menu
 	 */
 	tetrino_seed += 1;
 
@@ -108,7 +131,7 @@ update(float dt)
 void
 render(void)
 {
-	for (size_t i = 0; i < sizeof frame_buffer / sizeof frame_buffer[0][0]; i += 1)
+	for (size_t i = 0; i < sizeof(frame_buffer) / sizeof(frame_buffer[0][0]); i += 1)
 	{
 		frame_buffer[0][i] = color_from_8bits(0);
 	}

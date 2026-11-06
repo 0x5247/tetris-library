@@ -283,6 +283,38 @@ tetrino_move_down(void)
 }
 
 static void
+tetrino_move_rotate(int8_t dir, bool prioritize_rotation)
+{
+	tetrino.x += dir;
+	tetrino.orientation += 1;
+	tetrino.orientation &= 3;
+
+	if (!tetrino_can_fit())
+	{
+		if (prioritize_rotation)
+		{
+			tetrino.x -= dir;
+
+			if (!tetrino_can_fit())
+			{
+				tetrino.orientation += 3;
+				tetrino.orientation &= 3;
+			}
+		}
+		else
+		{
+			tetrino.orientation += 3;
+			tetrino.orientation &= 3;
+
+			if (!tetrino_can_fit())
+			{
+				tetrino.x -= dir;
+			}
+		}
+	}
+}
+
+static void
 tetrino_drop(void)
 {
 	while (tetrino_move_down())

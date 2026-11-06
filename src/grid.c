@@ -3,7 +3,7 @@ static uint8_t grid[23][10];
 static void
 grid_clear(void)
 {
-	for (size_t i = 0; i < sizeof grid; i += 1)
+	for (size_t i = 0; i < sizeof(grid); i += 1)
 	{
 		grid[0][i] = 0;
 	}
