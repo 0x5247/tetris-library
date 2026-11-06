@@ -16,7 +16,3 @@ typedef __UINT8_TYPE__ uint8_t;
 typedef __UINT16_TYPE__ uint16_t;
 typedef __UINT32_TYPE__ uint32_t;
 typedef __UINTPTR_TYPE__ uintptr_t;
-
-#define ABS(VAL) ((VAL) < 0 ? -(VAL) : (VAL))
-#define MAX(A, B) ((A) > (B) ? (A) : (B))
-#define MIN(A, B) ((A) < (B) ? (A) : (B))

@@ -9,10 +9,17 @@ enum input_type
 };
 
 static struct {
-	uint8_t buffer[256];
 	uint8_t head;
 	uint8_t tail;
+	uint8_t buffer[256];
 } input_queue;
+
+static void
+input_discard(void)
+{
+	input_queue.head = 0;
+	input_queue.tail = 0;
+}
 
 void
 input_enqueue(enum input_type type)
@@ -31,6 +38,7 @@ input_dequeue(void)
 {
 	if (input_queue.head == input_queue.tail)
 	{
+		input_discard();
 		return NONE;
 	}
 
@@ -50,11 +58,3 @@ input_peek(void)
 
 	return input_queue.buffer[input_queue.head];
 }
-
-#if 0
-static void
-input_discard(void)
-{
-	input_queue.head = input_queue.tail;
-}
-#endif
