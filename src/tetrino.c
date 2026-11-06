@@ -203,17 +203,34 @@ static struct tetrino_state tetrino;
 
 static uint8_t next_tetrino;
 
+#if 0
+static uint32_t
+tetrino_get_random(void)
+{
+  tetrino_seed += tetrino_seed == 0;
+
+  tetrino_seed ^= tetrino_seed << 13;
+  tetrino_seed ^= tetrino_seed >> 17;
+  tetrino_seed ^= tetrino_seed << 5;
+  tetrino_seed *= 23157137828039747;
+  tetrino_seed ^= tetrino_seed >> 16;
+
+	return tetrino_seed;
+}
+#endif
+
 static void
 tetrino_reset(void)
 {
 	tetrino.type = next_tetrino;
+
+	// todo: use that 7 + 1 bag randomizer thing
+	tetrino_seed ^= (tetrino.x + tetrino.y) << next_tetrino;
+	next_tetrino = tetrino_seed % 7;
+
 	tetrino.orientation = 1;
 	tetrino.x = 4;
 	tetrino.y = 3;
-
-	// todo: use that 7 + 1 bag randomizer thing
-	tetrino_seed ^= next_tetrino + 5;
-	next_tetrino = tetrino_seed % 7;
 }
 
 static bool
