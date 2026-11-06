@@ -1,0 +1,12 @@
+---
+Language: C
+BasedOnStyle: LLVM
+UseTab: ForIndentation
+IndentWidth: 4
+TabWidth: 4
+BreakBeforeBraces: Allman
+BreakAfterReturnType: AllDefinitions
+ColumnLimit: 100
+InsertBraces: true
+AlignEscapedNewlines: DontAlign
+---

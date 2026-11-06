@@ -1,0 +1,47 @@
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+* {
+	user-select: none;
+	/* border: solid 1px red !important; */
+}
+
+body {
+	background-color: #222;
+	color: #eee;
+}
+
+#canvas {
+	background-color: #000;
+	image-rendering: pixelated;
+	image-rendering: crisp-edges;
+
+	@media screen and (orientation:portrait) {
+		width: 100%;
+	}
+
+	@media screen and (orientation:landscape) {
+		height: 100%;
+	}
+}
+
+.buttons {
+	pading: 0px;
+	margin: 0px;
+}
+
+.buttons div {
+	width: 100px;
+	height: 100px;
+	margin: 10px;
+	padding: 0px;
+	border: none;
+	display: none;
+}
+
+.buttons .button {
+	background-color: white;
+	color: black;
+}
