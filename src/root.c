@@ -82,8 +82,8 @@ input_ticker(float dt)
 	static float at = 0;
 	at += dt;
 
-	return at >= 0.05f ? (at = 0, true) : false;
-	// todo:       ^ this interval has to be small enough to be not noticable
+	return at >= 0.0125f ? (at = 0, true) : false;
+	//             ^ this interval has to be small enough to be not noticable
 	//               and big enough to let at least two input in a single frame
 }
 
