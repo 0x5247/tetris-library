@@ -63,5 +63,5 @@ color_from_8bits(uint8_t c)
 	return ret;
 }
 
-// todo: make a segmented display style text renderer. that should be easier
+#include "text.c"
 #include "input.c"

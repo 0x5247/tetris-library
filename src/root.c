@@ -170,11 +170,29 @@ render(void)
 	switch (game_state)
 	{
 	case MENU:
+		{
+			uint16_t scale = cell_padding;
+
+			uint32_t pos_x = (get_width() >> 1) - ((scale * (5 + 1) * 6) >> 1);
+			uint32_t pos_y = (get_height() >> 1) - ((scale * (5 + 1)) >> 1);
+
+			text_fill(pos_x, pos_y, scale, color_from_8bits((uint8_t)tetrino_seed), "TETRIS");
+		}
 		break;
 	case GAME:
 		grid_draw();
 		tetrino_draw();
 		tetrino_draw_preview();
+
+		{
+			uint16_t scale = cell_padding;
+
+			uint32_t pos_x = cell_size * 16;
+			uint32_t pos_y = cell_size * 4;
+
+			text_fill(pos_x, pos_y, scale, -1, "LINES:");
+			u32_fill(pos_x, pos_y + glyph_height(scale), scale, -1, total_lines_cleared);
+		}
 		break;
 	case OVER:
 		grid_draw();
