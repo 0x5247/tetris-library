@@ -1,5 +1,7 @@
 // todo: make the renderer somewhat resolution independent
-#define FRAME_SIZE (28 * 24)
+
+#define CELL_SIZE 20
+#define FRAME_SIZE (25 * CELL_SIZE)
 
 // todo: get pointer to frame buffer from the runtime
 static uint32_t frame_buffer[FRAME_SIZE][FRAME_SIZE];
@@ -62,3 +64,4 @@ color_from_8bits(uint8_t c)
 }
 
 // todo: make a segmented display style text renderer. that should be easier
+#include "input.c"

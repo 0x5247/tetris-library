@@ -203,7 +203,6 @@ static struct tetrino_state tetrino;
 
 static uint8_t next_tetrino;
 
-#if 0
 static uint32_t
 tetrino_get_random(void)
 {
@@ -212,12 +211,11 @@ tetrino_get_random(void)
   tetrino_seed ^= tetrino_seed << 13;
   tetrino_seed ^= tetrino_seed >> 17;
   tetrino_seed ^= tetrino_seed << 5;
-  tetrino_seed *= 23157137828039747;
+  tetrino_seed *= *((uint32_t *)&tetrino) + (uint32_t)23157137828039747;
   tetrino_seed ^= tetrino_seed >> 16;
 
 	return tetrino_seed;
 }
-#endif
 
 static void
 tetrino_reset(void)
@@ -225,8 +223,7 @@ tetrino_reset(void)
 	tetrino.type = next_tetrino;
 
 	// todo: use that 7 + 1 bag randomizer thing
-	tetrino_seed ^= (tetrino.x + tetrino.y) << next_tetrino;
-	next_tetrino = tetrino_seed % 7;
+	next_tetrino = tetrino_get_random() % 7;
 
 	tetrino.orientation = 1;
 	tetrino.x = 4;
@@ -371,29 +368,14 @@ tetrino_draw(void)
 static void
 tetrino_draw_preview(void)
 {
-	// todo: untangle this mess
-	rect_fill(cell_offset_x - (cell_padding * 2) + ((cell_size + cell_padding) * 38),
-	          cell_offset_y - (cell_padding * 2) + ((cell_size + cell_padding) * 7),
-	          cell_offset_x + cell_padding + ((cell_size + cell_padding) * 38) +
-	              ((cell_size + cell_padding) * 4),
-	          cell_offset_y + cell_padding + ((cell_size + cell_padding) * 7) +
-	              ((cell_size + cell_padding) * 2),
-	          0xFFFFFFFF);
-
-	rect_fill(cell_offset_x - cell_padding + ((cell_size + cell_padding) * 38),
-	          cell_offset_y - cell_padding + ((cell_size + cell_padding) * 7),
-	          cell_offset_x + ((cell_size + cell_padding) * 38) + ((cell_size + cell_padding) * 4),
-	          cell_offset_y + ((cell_size + cell_padding) * 7) + ((cell_size + cell_padding) * 2),
-	          0xFF000000);
-
 	for (size_t i = 0; i < 4; i += 1)
 	{
-		const uint32_t x = 39 + tetrino_offsets[next_tetrino][1][i][1];
-		const uint32_t y = 7 + tetrino_offsets[next_tetrino][1][i][0];
+		const uint32_t x = 40 + tetrino_offsets[next_tetrino][1][i][1];
+		const uint32_t y = 8 + tetrino_offsets[next_tetrino][1][i][0];
 		const uint8_t color_idx = next_tetrino + 1;
 
-		square_fill(cell_offset_x + ((cell_size + cell_padding) * x),
-		            cell_offset_y + ((cell_size + cell_padding) * y), cell_size,
-		            grid_colors[color_idx]);
+		square_fill(cell_offset_x + (cell_size * x),
+								cell_offset_y + (cell_size * y), cell_size - cell_padding,
+								grid_colors[color_idx]);
 	}
 }

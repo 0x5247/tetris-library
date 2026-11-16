@@ -1,7 +1,6 @@
 #include "base.h"
 
 #include "frame.c"
-#include "input.c"
 #include "grid.c"
 #include "tetrino.c"
 
@@ -10,6 +9,8 @@ static enum {
 	GAME,
 	OVER,
 } game_state;
+
+static uint32_t total_lines_cleared = 0;
 
 void
 init(void)
@@ -33,7 +34,7 @@ handle_input(void)
 {
 	for (;;)
 	{
-		const uint8_t input = input_dequeue();
+		const enum input_type input = input_dequeue();
 		if (input == NONE)
 		{
 			break;
@@ -80,6 +81,8 @@ handle_input(void)
 		case DROP:
 			tetrino_drop();
 			break;
+		case NONE:
+			break;
 		}
 	}
 }
@@ -118,6 +121,8 @@ update(float dt)
 			tetrino_reset();
 			tetrino_reset();
 			game_state = GAME;
+			total_lines_cleared = 0;
+
 			input_discard();
 		}
 		break;
@@ -131,7 +136,7 @@ update(float dt)
 		{
 			if (!tetrino_move_down())
 			{
-				grid_clear_lines(tetrino_lock());
+				total_lines_cleared += grid_clear_lines(tetrino_lock());
 
 				tetrino_reset();
 				if (!tetrino_can_fit())
@@ -150,6 +155,7 @@ update(float dt)
 		break;
 	}
 }
+
 
 // todo: render frame only when needed (maybe)
 void

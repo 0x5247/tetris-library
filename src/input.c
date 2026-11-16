@@ -5,7 +5,7 @@ enum input_type
 	RIGHT,
 	DOWN,
 	DROP,
-	NONE = 255,
+	NONE = -1,
 };
 
 static struct {
@@ -33,12 +33,12 @@ input_enqueue(enum input_type type)
 	input_queue.tail += 1;
 }
 
-static uint8_t
+static enum input_type
 input_dequeue(void)
 {
 	if (input_queue.head == input_queue.tail)
 	{
-		input_discard();
+		input_discard(); // not necessary
 		return NONE;
 	}
 
@@ -48,7 +48,7 @@ input_dequeue(void)
 	return input_queue.buffer[idx];
 }
 
-static uint8_t
+static enum input_type
 input_peek(void)
 {
 	if (input_queue.head == input_queue.tail)

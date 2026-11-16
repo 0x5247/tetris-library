@@ -64,10 +64,10 @@ static const uint32_t grid_colors[] = {
 static uint32_t grid_colors[8];
 #endif
 
-static const uint32_t cell_size = 24;
-static const uint32_t cell_padding = 4;
-static const uint32_t cell_offset_x = 2 * (cell_padding + cell_size);
-static const uint32_t cell_offset_y = 1 * (cell_padding + cell_size);
+static const uint32_t cell_size = CELL_SIZE;
+static const uint32_t cell_padding = CELL_SIZE / 8;
+static const uint32_t cell_offset_x = 2 * cell_size;
+static const uint32_t cell_offset_y = 1 * cell_size;
 
 static void
 cell_draw(uint32_t x, uint32_t y, size_t color_idx)
@@ -78,8 +78,8 @@ cell_draw(uint32_t x, uint32_t y, size_t color_idx)
 		return;
 	}
 
-	square_fill(cell_offset_x + ((cell_size + cell_padding) * x),
-	            cell_offset_y + ((cell_size + cell_padding) * y), cell_size,
+	square_fill(cell_offset_x + (cell_size * x),
+	            cell_offset_y + (cell_size * y), cell_size - cell_padding,
 	            grid_colors[color_idx]);
 }
 
