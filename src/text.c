@@ -97,15 +97,13 @@ text_fill(uint32_t off_x, uint32_t off_y, uint32_t scale, uint32_t color, const 
 		case '\t':
 			x += glyph_width(scale) * 4;
 			break;
-		case '\n':
-			x = off_x;
-			y += glyph_height(scale);
-			break;
 		case '\r':
 			x = off_x;
 			break;
+		case '\n':
+			y += glyph_height(scale);
+			break;
 		case '\v':
-			x = off_x;
 			y += glyph_height(scale) * 3;
 			break;
 		default:

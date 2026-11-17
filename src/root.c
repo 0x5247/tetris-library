@@ -166,7 +166,6 @@ render(void)
 		frame_buffer[0][i] = color_from_8bits(0);
 	}
 
-	// todo: text rendering
 	switch (game_state)
 	{
 	case MENU:
@@ -179,24 +178,51 @@ render(void)
 			text_fill(pos_x, pos_y, scale, color_from_8bits((uint8_t)tetrino_seed), "TETRIS");
 		}
 		break;
+	case OVER:
+		{
+			uint16_t scale = cell_padding;
+
+			uint32_t pos_x = cell_size * 16;
+			uint32_t pos_y = cell_size * 12;
+
+			text_fill(pos_x, pos_y, scale, -1, "GAME OVER!!!");
+		}
 	case GAME:
-		grid_draw();
-		tetrino_draw();
-		tetrino_draw_preview();
+		grid_draw(cell_size * 3, cell_size * 2);
+		tetrino_draw(cell_size * 3, cell_size * 2);
 
 		{
 			uint16_t scale = cell_padding;
 
 			uint32_t pos_x = cell_size * 16;
-			uint32_t pos_y = cell_size * 4;
+			uint32_t pos_y = cell_size * 5;
 
 			text_fill(pos_x, pos_y, scale, -1, "LINES:");
-			u32_fill(pos_x, pos_y + glyph_height(scale), scale, -1, total_lines_cleared);
+
+			pos_y += cell_size;
+
+			u32_fill(pos_x, pos_y, scale, -1, total_lines_cleared);
+
+			pos_y = cell_size * 8;
+
+			text_fill(pos_x, pos_y, scale, -1, "SCORE?");
+
+			pos_y += cell_size;
+
+			text_fill(pos_x, pos_y, scale, -1, "00000000");
+
+			pos_y = cell_size * 15;
+
+			text_fill(pos_x, pos_y, scale, -1, "next:");
+
+			pos_y += cell_size;
+
+			rect_draw(pos_x, pos_y,
+					pos_x + cell_size * 4 + cell_padding * 3,
+					pos_y + cell_size * 2 + cell_padding * 3, cell_padding, -1);
+
+			tetrino_draw_preview(pos_x + cell_padding * 2, pos_y + cell_padding * 2);
 		}
-		break;
-	case OVER:
-		grid_draw();
-		tetrino_draw();
 		break;
 	}
 }

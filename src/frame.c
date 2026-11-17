@@ -37,6 +37,45 @@ rect_fill(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint32_t color)
 }
 
 static void
+rect_draw(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint32_t thickness, uint32_t color)
+{
+	if (x1 - x0 <= thickness << 1 || y1 - y0 <= thickness << 1)
+	{
+		rect_fill(x0, x1, y0, y1, color);
+		return;
+	}
+
+	for (const uint32_t y_end = y0 + thickness; y0 < y_end; y0 += 1)
+	{
+		for (uint32_t x = x0; x < x1; x += 1)
+		{
+			frame_buffer[y0][x] = color;
+		}
+	}
+
+	for (const uint32_t y_end = y1 - thickness; y0 < y_end; y0 += 1)
+	{
+		for (uint32_t x = x0, x_end = x0 + thickness; x < x_end; x += 1)
+		{
+			frame_buffer[y0][x] = color;
+		}
+
+		for (uint32_t x = x1 - thickness, x_end = x1; x < x_end; x += 1)
+		{
+			frame_buffer[y0][x] = color;
+		}
+	}
+
+	for (; y0 < y1; y0 += 1)
+	{
+		for (uint32_t x = x0; x < x1; x += 1)
+		{
+			frame_buffer[y0][x] = color;
+		}
+	}
+}
+
+static void
 square_fill(uint32_t x, uint32_t y, uint16_t sz, uint32_t color)
 {
 	rect_fill(x, y, x + sz, y + sz, color);

@@ -353,7 +353,7 @@ tetrino_lock(void)
 }
 
 static void
-tetrino_draw(void)
+tetrino_draw(uint32_t off_x, uint32_t off_y)
 {
 	for (size_t i = 0; i < 4; i += 1)
 	{
@@ -361,21 +361,21 @@ tetrino_draw(void)
 		const uint32_t y = tetrino.y + tetrino_offsets[tetrino.type][tetrino.orientation][i][0];
 		const uint8_t color_idx = tetrino.type + 1;
 
-		cell_draw(x, y, color_idx);
+		cell_draw(off_x, off_y, x, y, color_idx);
 	}
 }
 
 static void
-tetrino_draw_preview(void)
+tetrino_draw_preview(uint32_t off_x, uint32_t off_y)
 {
 	for (size_t i = 0; i < 4; i += 1)
 	{
-		const uint32_t x = 40 + tetrino_offsets[next_tetrino][1][i][1];
-		const uint32_t y = 8 + tetrino_offsets[next_tetrino][1][i][0];
+		const uint32_t x = 1 + tetrino_offsets[next_tetrino][1][i][1];
+		const uint32_t y = tetrino_offsets[next_tetrino][1][i][0];
 		const uint8_t color_idx = next_tetrino + 1;
 
-		square_fill(cell_offset_x + (cell_size * x),
-								cell_offset_y + (cell_size * y), cell_size - cell_padding,
+		square_fill(off_x + (cell_size * x),
+								off_y + (cell_size * y), cell_size - cell_padding,
 								grid_colors[color_idx]);
 	}
 }
