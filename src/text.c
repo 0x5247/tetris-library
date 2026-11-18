@@ -89,6 +89,76 @@ text_fill(uint32_t off_x, uint32_t off_y, uint32_t scale, uint32_t color, const 
 	{
 		const char c = text[i];
 
+		size_t off = 0;
+
+		if (c >= '0' && c <= '9')
+		{
+			glyph_fill(x, y, scale, color, c - '0');
+			x += glyph_width(scale);
+			continue;
+		}
+		else
+		{
+			off += '9' - '0' + 1;
+		}
+
+		if (c >= 'A' && c <= 'Z')
+		{
+			glyph_fill(x, y, scale, color, c - 'A' + off);
+			x += glyph_width(scale);
+			continue;
+		}
+		else if (c >= 'a' && c <= 'z')
+		{
+			glyph_fill(x, y, scale, color, c - 'a' + off);
+			x += glyph_width(scale);
+			continue;
+		}
+		else
+		{
+			off += 'Z' - 'A' + 1;
+		}
+
+		if (c >= '!' && c <= '/')
+		{
+			glyph_fill(x, y, scale, color, c - '!' + off);
+			x += glyph_width(scale);
+			continue;
+		}
+		else
+		{
+			off += '/' - '!' + 1;
+		}
+
+		if (c >= ':' && c <= '@')
+		{
+			glyph_fill(x, y, scale, color, c - ':' + off);
+			x += glyph_width(scale);
+			continue;
+		}
+		else
+		{
+			off += '@' - ':' + 1;
+		}
+
+		if (c >= '[' && c <= '`')
+		{
+			glyph_fill(x, y, scale, color, c - '[' + off);
+			x += glyph_width(scale);
+			continue;
+		}
+		else
+		{
+			off += '`' - '[' + 1;
+		}
+
+		if (c >= '{' && c <= '~')
+		{
+			glyph_fill(x, y, scale, color, c - '{' + off);
+			x += glyph_width(scale);
+			continue;
+		}
+
 		switch (c)
 		{
 		case ' ':
@@ -107,81 +177,8 @@ text_fill(uint32_t off_x, uint32_t off_y, uint32_t scale, uint32_t color, const 
 			y += glyph_height(scale) * 3;
 			break;
 		default:
-			{
-				size_t off = 0;
-
-				if (c >= '0' && c <= '9')
-				{
-					glyph_fill(x, y, scale, color, c - '0');
-					x += glyph_width(scale);
-					break;
-				}
-				else
-				{
-					off += '9' - '0' + 1;
-				}
-
-				if (c >= 'A' && c <= 'Z')
-				{
-					glyph_fill(x, y, scale, color, c - 'A' + off);
-					x += glyph_width(scale);
-					break;
-				}
-				else if (c >= 'a' && c <= 'z')
-				{
-					glyph_fill(x, y, scale, color, c - 'a' + off);
-					x += glyph_width(scale);
-					break;
-				}
-				else
-				{
-					off += 'Z' - 'A' + 1;
-				}
-
-				if (c >= '!' && c <= '/')
-				{
-					glyph_fill(x, y, scale, color, c - '!' + off);
-					x += glyph_width(scale);
-					break;
-				}
-				else
-				{
-					off += '/' - '!' + 1;
-				}
-
-				if (c >= ':' && c <= '@')
-				{
-					glyph_fill(x, y, scale, color, c - ':' + off);
-					x += glyph_width(scale);
-					break;
-				}
-				else
-				{
-					off += '@' - ':' + 1;
-				}
-
-				if (c >= '[' && c <= '`')
-				{
-					glyph_fill(x, y, scale, color, c - '[' + off);
-					x += glyph_width(scale);
-					break;
-				}
-				else
-				{
-					off += '`' - '[' + 1;
-				}
-
-				if (c >= '{' && c <= '~')
-				{
-					glyph_fill(x, y, scale, color, c - '{' + off);
-				}
-				else
-				{
-					glyph_fill(x, y, scale, color, (sizeof(glyphs) / sizeof(glyphs[0])) - 1);
-				}
-
-				x += glyph_width(scale);
-			}
+			glyph_fill(x, y, scale, color, (sizeof(glyphs) / sizeof(glyphs[0])) - 1);
+			x += glyph_width(scale);
 			break;
 		}
 	}

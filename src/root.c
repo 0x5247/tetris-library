@@ -117,6 +117,7 @@ update(float dt)
 	case MENU:
 		if (input_dequeue() == DROP)
 		{
+			tetrino.x += 3;
 			tetrino_reset();
 			tetrino_reset();
 			tetrino_reset();

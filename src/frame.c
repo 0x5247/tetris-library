@@ -1,6 +1,6 @@
 // todo: make the renderer somewhat resolution independent
 
-#define CELL_SIZE 20
+#define CELL_SIZE (8)
 #define FRAME_SIZE (25 * CELL_SIZE)
 
 // todo: get pointer to frame buffer from the runtime
