@@ -201,7 +201,10 @@ static uint32_t tetrino_seed = 0;
 
 static struct tetrino_state tetrino;
 
-static uint8_t next_tetrino;
+static struct {
+	size_t count;
+	uint8_t val[7 + 1];
+} tetrino_bag;
 
 static uint32_t
 tetrino_get_random(void)
@@ -220,10 +223,37 @@ tetrino_get_random(void)
 static void
 tetrino_reset(void)
 {
-	tetrino.type = next_tetrino;
+	tetrino.type = tetrino_bag.val[tetrino_bag.count];
 
-	// todo: use that 7 + 1 bag randomizer thing
-	next_tetrino = tetrino_get_random() % 7;
+	tetrino_bag.count -= 1;
+
+	if (tetrino_bag.count > 7)
+	{
+		tetrino_bag.val[0] = 0;
+		tetrino_bag.val[1] = 1;
+		tetrino_bag.val[2] = 2;
+		tetrino_bag.val[3] = 3;
+		tetrino_bag.val[4] = 4;
+		tetrino_bag.val[5] = 5;
+		tetrino_bag.val[6] = 6;
+		tetrino_bag.val[7] = tetrino_get_random() % 7;
+
+		{
+			size_t idx = 8;
+
+			while (idx != 0)
+			{
+				size_t ridx = tetrino_get_random() % idx;
+				idx -= 1;
+
+				uint8_t t = tetrino_bag.val[idx];
+				tetrino_bag.val[idx] = tetrino_bag.val[ridx];
+				tetrino_bag.val[ridx] = t;
+			}
+		}
+
+		tetrino_bag.count = 7;
+	}
 
 	tetrino.orientation = 1;
 	tetrino.x = 4;
@@ -255,7 +285,7 @@ tetrino_rotate(void)
 
 	if (!tetrino_can_fit())
 	{
-		tetrino.orientation += 3;
+		tetrino.orientation -= 1;
 		tetrino.orientation &= 3;
 	}
 }
@@ -311,13 +341,13 @@ tetrino_move_rotate(int8_t dir, bool prioritize_rotation)
 
 			if (!tetrino_can_fit())
 			{
-				tetrino.orientation += 3;
+				tetrino.orientation -= 1;
 				tetrino.orientation &= 3;
 			}
 		}
 		else
 		{
-			tetrino.orientation += 3;
+			tetrino.orientation -= 1;
 			tetrino.orientation &= 3;
 
 			if (!tetrino_can_fit())
@@ -368,11 +398,13 @@ tetrino_draw(uint32_t off_x, uint32_t off_y)
 static void
 tetrino_draw_preview(uint32_t off_x, uint32_t off_y)
 {
+	uint8_t next = tetrino_bag.val[tetrino_bag.count];
+
 	for (size_t i = 0; i < 4; i += 1)
 	{
-		const uint32_t x = 1 + tetrino_offsets[next_tetrino][1][i][1];
-		const uint32_t y = tetrino_offsets[next_tetrino][1][i][0];
-		const uint8_t color_idx = next_tetrino + 1;
+		const uint32_t x = 1 + tetrino_offsets[next][1][i][1];
+		const uint32_t y = tetrino_offsets[next][1][i][0];
+		const uint8_t color_idx = next + 1;
 
 		square_fill(off_x + (cell_size * x),
 								off_y + (cell_size * y), cell_size - cell_padding,
