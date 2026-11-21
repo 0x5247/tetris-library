@@ -64,8 +64,8 @@ static const uint32_t grid_colors[] = {
 static uint32_t grid_colors[8];
 #endif
 
-static const uint32_t cell_size = CELL_SIZE;
-static const uint32_t cell_padding = CELL_SIZE / 8;
+static const uint32_t cell_size = UNIT_SIZE * CELL_SIZE;
+static const uint32_t cell_padding = UNIT_SIZE * CELL_PADDING;
 
 static void
 cell_draw(uint32_t off_x, uint32_t off_y, uint32_t x, uint32_t y, size_t color_idx)

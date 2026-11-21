@@ -1,7 +1,10 @@
-// todo: make the renderer somewhat resolution independent
+#ifndef UNIT_SIZE
+#define UNIT_SIZE 1
+#endif
 
-#define CELL_SIZE (8)
-#define FRAME_SIZE (25 * CELL_SIZE)
+#define CELL_SIZE 12
+#define CELL_PADDING 2
+#define FRAME_SIZE (24 * CELL_SIZE * UNIT_SIZE)
 
 // todo: get pointer to frame buffer from the runtime
 static uint32_t frame_buffer[FRAME_SIZE][FRAME_SIZE];

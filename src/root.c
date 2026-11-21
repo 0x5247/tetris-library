@@ -117,10 +117,11 @@ update(float dt)
 	case MENU:
 		if (input_dequeue() == DROP)
 		{
-			tetrino.x += 3;
+			tetrino.x += 67;
+			tetrino.y += 42;
+
 			tetrino_reset();
-			tetrino_reset();
-			tetrino_reset();
+
 			game_state = GAME;
 			total_lines_cleared = 0;
 
@@ -171,32 +172,34 @@ render(void)
 	{
 	case MENU:
 		{
-			uint16_t scale = cell_padding;
+			uint16_t scale = UNIT_SIZE;
 
 			uint32_t pos_x = (get_width() >> 1) - ((scale * (5 + 1) * 6) >> 1);
 			uint32_t pos_y = (get_height() >> 1) - ((scale * (5 + 1)) >> 1);
 
-			text_fill(pos_x, pos_y, scale, color_from_8bits((uint8_t)tetrino_seed), "TETRIS");
+			text_fill(pos_x, pos_y, scale, color_from_8bits(7 << 2), "TETRIS");
 		}
 		break;
 	case OVER:
 		{
-			uint16_t scale = cell_padding;
+			uint16_t scale = UNIT_SIZE;
 
 			uint32_t pos_x = cell_size * 16;
-			uint32_t pos_y = cell_size * 12;
+			uint32_t pos_y = cell_size * 18;
 
-			text_fill(pos_x, pos_y, scale, -1, "GAME OVER!!!");
+			uint32_t color = color_from_8bits((uint8_t)tetrino_get_random());
+
+			text_fill(pos_x, pos_y, scale, color, "GAME OVER!!!");
 		}
 	case GAME:
 		grid_draw(cell_size * 3, cell_size * 2);
 		tetrino_draw(cell_size * 3, cell_size * 2);
 
 		{
-			uint16_t scale = cell_padding;
+			uint16_t scale = UNIT_SIZE;
 
 			uint32_t pos_x = cell_size * 16;
-			uint32_t pos_y = cell_size * 5;
+			uint32_t pos_y = cell_size * 2;
 
 			text_fill(pos_x, pos_y, scale, -1, "LINES:");
 
@@ -204,7 +207,7 @@ render(void)
 
 			u32_fill(pos_x, pos_y, scale, -1, total_lines_cleared);
 
-			pos_y = cell_size * 8;
+			pos_y += cell_size * 2;
 
 			text_fill(pos_x, pos_y, scale, -1, "SCORE?");
 
@@ -212,7 +215,7 @@ render(void)
 
 			text_fill(pos_x, pos_y, scale, -1, "00000000");
 
-			pos_y = cell_size * 15;
+			pos_y += cell_size * 5;
 
 			text_fill(pos_x, pos_y, scale, -1, "next:");
 

@@ -232,11 +232,11 @@ tetrino_reset(void)
 		tetrino_bag.val[0] = 0;
 		tetrino_bag.val[1] = 1;
 		tetrino_bag.val[2] = 2;
-		tetrino_bag.val[3] = 3;
-		tetrino_bag.val[4] = 4;
-		tetrino_bag.val[5] = 5;
-		tetrino_bag.val[6] = 6;
-		tetrino_bag.val[7] = tetrino_get_random() % 7;
+		tetrino_bag.val[3] = tetrino_get_random() % 7;
+		tetrino_bag.val[4] = 3;
+		tetrino_bag.val[5] = 4;
+		tetrino_bag.val[6] = 5;
+		tetrino_bag.val[7] = 6;
 
 		{
 			size_t idx = 8;
