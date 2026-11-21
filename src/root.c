@@ -100,16 +100,13 @@ drop_ticker(float dt)
 void
 update(float dt)
 {
-	g_tetrino_seed += *((uint32_t *)&g_tetrino);
+	g_tetrino_seed += *((uint32_t *)&g_tetrino) + 1;
 
 	switch (g_game_state)
 	{
 	case MENU:
 		if (input_dequeue() == DROP)
 		{
-			g_tetrino.x += 67;
-			g_tetrino.y += 42;
-
 			tetrino_reset();
 
 			g_game_state = GAME;
@@ -161,10 +158,10 @@ render(void)
 	{
 	case MENU:
 	{
-		uint16_t scale = g_unit_size;
+		uint16_t scale = g_unit_size * 3;
 
-		uint32_t pos_x = (get_width() >> 1) - ((scale * (5 + 1) * 6) >> 1);
-		uint32_t pos_y = (get_height() >> 1) - ((scale * (5 + 1)) >> 1);
+		uint32_t pos_x = (g_frame_width >> 1) - ((glyph_width(scale) * 6) >> 1);
+		uint32_t pos_y = (g_frame_height >> 1) - (glyph_height(scale) >> 1);
 
 		const char *text = "TETRIS";
 
