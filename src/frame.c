@@ -1,30 +1,69 @@
-#ifndef UNIT_SIZE
-#define UNIT_SIZE 1
-#endif
-
+#define CELL_COUNT 24
 #define CELL_SIZE 12
 #define CELL_PADDING 2
-#define FRAME_SIZE (24 * CELL_SIZE * UNIT_SIZE)
 
-// todo: get pointer to frame buffer from the runtime
-static uint32_t frame_buffer[FRAME_SIZE][FRAME_SIZE];
+static uint32_t *g_frame_pointer = 0;
 
-void *
-get_frame_buffer(void)
+static uint32_t g_frame_width = 0;
+static uint32_t g_frame_height = 0;
+
+static uint8_t g_unit_size = 0;
+static uint16_t g_cell_size = 0;
+static uint16_t g_cell_padding = 0;
+
+// todo: pick better colors
+static const uint32_t g_pallet[] = {
+	0XFF3F3F3F,
+	0XFFFF7F00,
+	0XFF00FF00,
+	0XFF0000FF,
+	0XFF00FFFF,
+	0XFFFF00FF,
+	0XFFFFFF00,
+	0XFF007FFF,
+};
+
+uint32_t
+calc_frame_size(uint8_t unit_size)
 {
-	return frame_buffer;
+	uint32_t length = CELL_COUNT * CELL_SIZE * unit_size;
+	return length * length * sizeof(uint32_t);
 }
+
+void
+set_frame_pointer(uint32_t *fp)
+{
+	g_frame_pointer = fp;
+}
+
+void
+set_unit_size(uint8_t unit_size)
+{
+	uint32_t length = CELL_COUNT * CELL_SIZE * unit_size;
+
+	g_unit_size = unit_size;
+
+	g_cell_size = CELL_SIZE * unit_size;
+	g_cell_padding = CELL_PADDING * unit_size;
+
+	g_frame_width = length;
+	g_frame_height = length;
+}
+
+#undef CELL_COUNT
+#undef CELL_SIZE
+#undef CELL_PADDING
 
 uint32_t
 get_width(void)
 {
-	return FRAME_SIZE;
+	return g_frame_width;
 }
 
 uint32_t
 get_height(void)
 {
-	return FRAME_SIZE;
+	return g_frame_height;
 }
 
 static void
@@ -34,7 +73,7 @@ rect_fill(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint32_t color)
 	{
 		for (uint32_t x = x0; x < x1; x += 1)
 		{
-			frame_buffer[y][x] = color;
+			g_frame_pointer[y * g_frame_width + x] = color;
 		}
 	}
 }
@@ -52,7 +91,7 @@ rect_draw(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint32_t thickness
 	{
 		for (uint32_t x = x0; x < x1; x += 1)
 		{
-			frame_buffer[y0][x] = color;
+			g_frame_pointer[y0 * g_frame_width + x] = color;
 		}
 	}
 
@@ -60,12 +99,12 @@ rect_draw(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint32_t thickness
 	{
 		for (uint32_t x = x0, x_end = x0 + thickness; x < x_end; x += 1)
 		{
-			frame_buffer[y0][x] = color;
+			g_frame_pointer[y0 * g_frame_width + x] = color;
 		}
 
 		for (uint32_t x = x1 - thickness, x_end = x1; x < x_end; x += 1)
 		{
-			frame_buffer[y0][x] = color;
+			g_frame_pointer[y0 * g_frame_width + x] = color;
 		}
 	}
 
@@ -73,7 +112,7 @@ rect_draw(uint32_t x0, uint32_t y0, uint32_t x1, uint32_t y1, uint32_t thickness
 	{
 		for (uint32_t x = x0; x < x1; x += 1)
 		{
-			frame_buffer[y0][x] = color;
+			g_frame_pointer[y0 * g_frame_width + x] = color;
 		}
 	}
 }
@@ -105,5 +144,5 @@ color_from_8bits(uint8_t c)
 	return ret;
 }
 
-#include "text.c"
 #include "input.c"
+#include "text.c"

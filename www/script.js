@@ -26,15 +26,20 @@ WebAssembly.instantiateStreaming(fetch("/mod.wasm"), {
 
 	const ctx = canvas.getContext("2d", { willReadFrequently: true });
 
-	const pixels = exports.get_frame_buffer();
+	const unit_size = 1;
+
+	const size = exports.calc_frame_size(unit_size);
+
+	const pixels = exports.mem_alloc(size);
+
+	exports.set_frame_pointer(pixels);
+	exports.set_unit_size(unit_size);
 
 	const width = exports.get_width();
 	const height = exports.get_height();
 
 	canvas.width = width;
 	canvas.height = height;
-
-	const size = width * height * 4;
 
 	const frame = new ImageData(new Uint8ClampedArray(memory.buffer, pixels, size), width, height);
 

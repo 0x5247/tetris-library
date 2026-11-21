@@ -4,7 +4,7 @@
  * note: the y value of the last cell should be the highest
  *       that's what the function `tetrino_lock` assumes
  */
-static const int8_t tetrino_offsets[7][4][4][2] = {
+static const int8_t g_tetrino_offsets[7][4][4][2] = {
     {
         {
             {-1, 0},
@@ -197,46 +197,48 @@ struct tetrino_state
 	uint8_t y;
 };
 
-static uint32_t tetrino_seed = 0;
+static uint64_t g_tetrino_seed = 0;
 
-static struct tetrino_state tetrino;
+static struct tetrino_state g_tetrino;
 
-static struct {
+static struct
+{
 	size_t count;
 	uint8_t val[7 + 1];
-} tetrino_bag;
+} g_tetrino_bag;
 
-static uint32_t
+// SplitMix64
+// https://prng.di.unimi.it/splitmix.c
+static uint64_t
 tetrino_get_random(void)
 {
-  tetrino_seed += tetrino_seed == 0;
+	g_tetrino_seed += 0x9e3779b97f4a7c15;
 
-  tetrino_seed ^= tetrino_seed << 13;
-  tetrino_seed ^= tetrino_seed >> 17;
-  tetrino_seed ^= tetrino_seed << 5;
-  tetrino_seed *= *((uint32_t *)&tetrino) + (uint32_t)23157137828039747;
-  tetrino_seed ^= tetrino_seed >> 16;
+	uint64_t z = g_tetrino_seed;
 
-	return tetrino_seed;
+	z = (z ^ (z >> 30)) * 0xbf58476d1ce4e5b9;
+	z = (z ^ (z >> 27)) * 0x94d049bb133111eb;
+
+	return z ^ (z >> 31);
 }
 
 static void
 tetrino_reset(void)
 {
-	tetrino.type = tetrino_bag.val[tetrino_bag.count];
+	g_tetrino.type = g_tetrino_bag.val[g_tetrino_bag.count];
 
-	tetrino_bag.count -= 1;
+	g_tetrino_bag.count -= 1;
 
-	if (tetrino_bag.count > 7)
+	if (g_tetrino_bag.count > 7)
 	{
-		tetrino_bag.val[0] = 0;
-		tetrino_bag.val[1] = 1;
-		tetrino_bag.val[2] = 2;
-		tetrino_bag.val[3] = tetrino_get_random() % 7;
-		tetrino_bag.val[4] = 3;
-		tetrino_bag.val[5] = 4;
-		tetrino_bag.val[6] = 5;
-		tetrino_bag.val[7] = 6;
+		g_tetrino_bag.val[0] = 0;
+		g_tetrino_bag.val[1] = 1;
+		g_tetrino_bag.val[2] = 2;
+		g_tetrino_bag.val[3] = tetrino_get_random() % 7;
+		g_tetrino_bag.val[4] = 3;
+		g_tetrino_bag.val[5] = 4;
+		g_tetrino_bag.val[6] = 5;
+		g_tetrino_bag.val[7] = 6;
 
 		{
 			size_t idx = 8;
@@ -246,18 +248,18 @@ tetrino_reset(void)
 				size_t ridx = tetrino_get_random() % idx;
 				idx -= 1;
 
-				uint8_t t = tetrino_bag.val[idx];
-				tetrino_bag.val[idx] = tetrino_bag.val[ridx];
-				tetrino_bag.val[ridx] = t;
+				uint8_t t = g_tetrino_bag.val[idx];
+				g_tetrino_bag.val[idx] = g_tetrino_bag.val[ridx];
+				g_tetrino_bag.val[ridx] = t;
 			}
 		}
 
-		tetrino_bag.count = 7;
+		g_tetrino_bag.count = 7;
 	}
 
-	tetrino.orientation = 1;
-	tetrino.x = 4;
-	tetrino.y = 3;
+	g_tetrino.orientation = 1;
+	g_tetrino.x = 4;
+	g_tetrino.y = 3;
 }
 
 static bool
@@ -265,10 +267,12 @@ tetrino_can_fit(void)
 {
 	for (size_t i = 0; i < 4; i += 1)
 	{
-		const uint32_t x = tetrino.x + tetrino_offsets[tetrino.type][tetrino.orientation][i][1];
-		const uint32_t y = tetrino.y + tetrino_offsets[tetrino.type][tetrino.orientation][i][0];
+		const uint32_t x =
+		    g_tetrino.x + g_tetrino_offsets[g_tetrino.type][g_tetrino.orientation][i][1];
+		const uint32_t y =
+		    g_tetrino.y + g_tetrino_offsets[g_tetrino.type][g_tetrino.orientation][i][0];
 
-		if (x >= 10 || y >= 23 || grid[y][x] != 0)
+		if (x >= 10 || y >= 23 || g_grid[y][x] != 0)
 		{
 			return false;
 		}
@@ -280,46 +284,46 @@ tetrino_can_fit(void)
 static void
 tetrino_rotate(void)
 {
-	tetrino.orientation += 1;
-	tetrino.orientation &= 3;
+	g_tetrino.orientation += 1;
+	g_tetrino.orientation &= 3;
 
 	if (!tetrino_can_fit())
 	{
-		tetrino.orientation -= 1;
-		tetrino.orientation &= 3;
+		g_tetrino.orientation -= 1;
+		g_tetrino.orientation &= 3;
 	}
 }
 
 static void
 tetrino_move_left(void)
 {
-	tetrino.x -= 1;
+	g_tetrino.x -= 1;
 
 	if (!tetrino_can_fit())
 	{
-		tetrino.x += 1;
+		g_tetrino.x += 1;
 	}
 }
 
 static void
 tetrino_move_right(void)
 {
-	tetrino.x += 1;
+	g_tetrino.x += 1;
 
 	if (!tetrino_can_fit())
 	{
-		tetrino.x -= 1;
+		g_tetrino.x -= 1;
 	}
 }
 
 static bool
 tetrino_move_down(void)
 {
-	tetrino.y += 1;
+	g_tetrino.y += 1;
 
 	if (!tetrino_can_fit())
 	{
-		tetrino.y -= 1;
+		g_tetrino.y -= 1;
 		return false;
 	}
 
@@ -329,30 +333,30 @@ tetrino_move_down(void)
 static void
 tetrino_move_rotate(int8_t dir, bool prioritize_rotation)
 {
-	tetrino.x += dir;
-	tetrino.orientation += 1;
-	tetrino.orientation &= 3;
+	g_tetrino.x += dir;
+	g_tetrino.orientation += 1;
+	g_tetrino.orientation &= 3;
 
 	if (!tetrino_can_fit())
 	{
 		if (prioritize_rotation)
 		{
-			tetrino.x -= dir;
+			g_tetrino.x -= dir;
 
 			if (!tetrino_can_fit())
 			{
-				tetrino.orientation -= 1;
-				tetrino.orientation &= 3;
+				g_tetrino.orientation -= 1;
+				g_tetrino.orientation &= 3;
 			}
 		}
 		else
 		{
-			tetrino.orientation -= 1;
-			tetrino.orientation &= 3;
+			g_tetrino.orientation -= 1;
+			g_tetrino.orientation &= 3;
 
 			if (!tetrino_can_fit())
 			{
-				tetrino.x -= dir;
+				g_tetrino.x -= dir;
 			}
 		}
 	}
@@ -373,10 +377,10 @@ tetrino_lock(void)
 
 	for (size_t i = 0; i < 4; i += 1)
 	{
-		x = tetrino.x + tetrino_offsets[tetrino.type][tetrino.orientation][i][1];
-		y = tetrino.y + tetrino_offsets[tetrino.type][tetrino.orientation][i][0];
+		x = g_tetrino.x + g_tetrino_offsets[g_tetrino.type][g_tetrino.orientation][i][1];
+		y = g_tetrino.y + g_tetrino_offsets[g_tetrino.type][g_tetrino.orientation][i][0];
 
-		grid[y][x] = tetrino.type + 1;
+		g_grid[y][x] = g_tetrino.type + 1;
 	}
 
 	return y;
@@ -387,9 +391,11 @@ tetrino_draw(uint32_t off_x, uint32_t off_y)
 {
 	for (size_t i = 0; i < 4; i += 1)
 	{
-		const uint32_t x = tetrino.x + tetrino_offsets[tetrino.type][tetrino.orientation][i][1];
-		const uint32_t y = tetrino.y + tetrino_offsets[tetrino.type][tetrino.orientation][i][0];
-		const uint8_t color_idx = tetrino.type + 1;
+		const uint32_t x =
+		    g_tetrino.x + g_tetrino_offsets[g_tetrino.type][g_tetrino.orientation][i][1];
+		const uint32_t y =
+		    g_tetrino.y + g_tetrino_offsets[g_tetrino.type][g_tetrino.orientation][i][0];
+		const uint8_t color_idx = g_tetrino.type + 1;
 
 		cell_draw(off_x, off_y, x, y, color_idx);
 	}
@@ -398,16 +404,15 @@ tetrino_draw(uint32_t off_x, uint32_t off_y)
 static void
 tetrino_draw_preview(uint32_t off_x, uint32_t off_y)
 {
-	uint8_t next = tetrino_bag.val[tetrino_bag.count];
+	uint8_t next = g_tetrino_bag.val[g_tetrino_bag.count];
 
 	for (size_t i = 0; i < 4; i += 1)
 	{
-		const uint32_t x = 1 + tetrino_offsets[next][1][i][1];
-		const uint32_t y = tetrino_offsets[next][1][i][0];
+		const uint32_t x = 1 + g_tetrino_offsets[next][1][i][1];
+		const uint32_t y = g_tetrino_offsets[next][1][i][0];
 		const uint8_t color_idx = next + 1;
 
-		square_fill(off_x + (cell_size * x),
-								off_y + (cell_size * y), cell_size - cell_padding,
-								grid_colors[color_idx]);
+		square_fill(off_x + (g_cell_size * x), off_y + (g_cell_size * y),
+		            g_cell_size - g_cell_padding, g_pallet[color_idx]);
 	}
 }

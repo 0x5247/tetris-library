@@ -8,53 +8,54 @@ enum input_type
 	NONE = -1,
 };
 
-static struct {
+static struct
+{
 	uint8_t head;
 	uint8_t tail;
 	uint8_t buffer[256];
-} input_queue;
+} g_input_queue;
 
 static void
 input_discard(void)
 {
-	input_queue.head = 0;
-	input_queue.tail = 0;
+	g_input_queue.head = 0;
+	g_input_queue.tail = 0;
 }
 
 void
 input_enqueue(enum input_type type)
 {
-	if ((uint8_t)(input_queue.tail + 1) == input_queue.head)
+	if ((uint8_t)(g_input_queue.tail + 1) == g_input_queue.head)
 	{
 		return;
 	}
 
-	input_queue.buffer[input_queue.tail] = (uint8_t)type;
-	input_queue.tail += 1;
+	g_input_queue.buffer[g_input_queue.tail] = (uint8_t)type;
+	g_input_queue.tail += 1;
 }
 
 static enum input_type
 input_dequeue(void)
 {
-	if (input_queue.head == input_queue.tail)
+	if (g_input_queue.head == g_input_queue.tail)
 	{
 		input_discard(); // not necessary
 		return NONE;
 	}
 
-	const uint8_t idx = input_queue.head;
-	input_queue.head += 1;
+	const uint8_t idx = g_input_queue.head;
+	g_input_queue.head += 1;
 
-	return input_queue.buffer[idx];
+	return g_input_queue.buffer[idx];
 }
 
 static enum input_type
 input_peek(void)
 {
-	if (input_queue.head == input_queue.tail)
+	if (g_input_queue.head == g_input_queue.tail)
 	{
 		return NONE;
 	}
 
-	return input_queue.buffer[input_queue.head];
+	return g_input_queue.buffer[g_input_queue.head];
 }
