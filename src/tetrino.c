@@ -397,7 +397,7 @@ tetrino_draw(uint32_t off_x, uint32_t off_y)
 		    g_tetrino.y + g_tetrino_offsets[g_tetrino.type][g_tetrino.orientation][i][0];
 		const uint8_t color_idx = g_tetrino.type + 1;
 
-		cell_draw(off_x, off_y, x, y, color_idx);
+		cell_fill(off_x, off_y, x, y, color_idx);
 	}
 }
 
@@ -412,7 +412,6 @@ tetrino_draw_preview(uint32_t off_x, uint32_t off_y)
 		const uint32_t y = g_tetrino_offsets[next][1][i][0];
 		const uint8_t color_idx = next + 1;
 
-		square_fill(off_x + (g_cell_size * x), off_y + (g_cell_size * y),
-		            g_cell_size - g_cell_padding, g_pallet[color_idx]);
+		cell_fill(off_x, off_y, x, y + 3, color_idx);
 	}
 }

@@ -11,16 +11,17 @@ static uint8_t g_unit_size = 0;
 static uint16_t g_cell_size = 0;
 static uint16_t g_cell_padding = 0;
 
-// todo: pick better colors
 static const uint32_t g_pallet[] = {
-	0XFF3F3F3F,
-	0XFFFF7F00,
-	0XFF00FF00,
-	0XFF0000FF,
-	0XFF00FFFF,
-	0XFFFF00FF,
-	0XFFFFFF00,
-	0XFF007FFF,
+	0XFF000000,
+	0XFFFCFCFC,
+	0XFF544848,
+	0XFF0000FC,
+	0XFF006CFC,
+	0XFF00D8FC,
+	0XFF549024,
+	0XFFFCB400,
+	0XFFFC486C,
+	0XFFA86CFC,
 };
 
 uint32_t
@@ -124,7 +125,7 @@ square_fill(uint32_t x, uint32_t y, uint16_t sz, uint32_t color)
 }
 
 static uint32_t
-color_from_8bits(uint8_t c)
+rgb8(uint8_t c)
 {
 	// 0bRRRGGGBB
 	uint8_t r = c & (7 << 5);

@@ -57,7 +57,7 @@ grid_clear_lines(uint32_t end)
 }
 
 static void
-cell_draw(uint32_t off_x, uint32_t off_y, uint32_t x, uint32_t y, size_t color_idx)
+cell_fill(uint32_t off_x, uint32_t off_y, uint32_t x, uint32_t y, size_t color_idx)
 {
 	y -= 3;
 	if (y > 20)
@@ -66,7 +66,7 @@ cell_draw(uint32_t off_x, uint32_t off_y, uint32_t x, uint32_t y, size_t color_i
 	}
 
 	square_fill(off_x + (g_cell_size * x), off_y + (g_cell_size * y), g_cell_size - g_cell_padding,
-	            g_pallet[color_idx]);
+	            g_pallet[color_idx + 2]);
 }
 
 static void
@@ -76,7 +76,7 @@ grid_draw(uint32_t off_x, uint32_t off_y)
 	{
 		for (size_t x = 0; x < 10; x += 1)
 		{
-			cell_draw(off_x, off_y, x, y, g_grid[y][x]);
+			cell_fill(off_x, off_y, x, y, g_grid[y][x]);
 		}
 	}
 }

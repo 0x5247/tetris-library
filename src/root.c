@@ -24,14 +24,7 @@ handle_input(void)
 {
 	for (;;)
 	{
-		const enum input_type input = input_dequeue();
-		if (input == NONE)
-		{
-			break;
-		}
-
-		// todo: refactor this
-		switch (input)
+		switch (input_dequeue())
 		{
 		case ROTATE:
 			if (input_peek() == LEFT || input_peek() == RIGHT)
@@ -72,7 +65,7 @@ handle_input(void)
 			tetrino_drop();
 			break;
 		case NONE:
-			break;
+			return;
 		}
 	}
 }
@@ -94,7 +87,7 @@ drop_ticker(float dt)
 	static float at = 0;
 	at += dt;
 
-	return at >= 0.5f ? (at = 0, true) : false;
+	return at >= 0.25f ? (at = 0, true) : false;
 }
 
 void
@@ -151,7 +144,7 @@ render(void)
 {
 	for (size_t i = 0, len = g_frame_width * g_frame_height; i < len; i += 1)
 	{
-		g_frame_pointer[i] = color_from_8bits(0);
+		g_frame_pointer[i] = g_pallet[0];
 	}
 
 	switch (g_game_state)
@@ -165,7 +158,7 @@ render(void)
 
 		const char *text = "TETRIS";
 
-		for (size_t i = 1; *text != 0; i += 1, text += 1)
+		for (size_t i = 3; *text != 0; i += 1, text += 1)
 		{
 			glyph_fill(pos_x, pos_y, scale, g_pallet[i], *text - 'A' + 10);
 			pos_x += glyph_width(scale);
@@ -179,7 +172,7 @@ render(void)
 		uint32_t pos_x = g_cell_size * 16;
 		uint32_t pos_y = g_cell_size * 18;
 
-		uint32_t color = color_from_8bits((uint8_t)tetrino_get_random());
+		uint32_t color = rgb8((uint8_t)tetrino_get_random());
 
 		text_fill(pos_x, pos_y, scale, color, "GAME OVER!!!");
 	}
@@ -193,28 +186,28 @@ render(void)
 			uint32_t pos_x = g_cell_size * 16;
 			uint32_t pos_y = g_cell_size * 2;
 
-			text_fill(pos_x, pos_y, scale, -1, "LINES:");
+			text_fill(pos_x, pos_y, scale, g_pallet[1], "LINES:");
 
 			pos_y += g_cell_size;
 
-			number_fill(pos_x, pos_y, scale, -1, g_lines_cleared);
+			number_fill(pos_x, pos_y, scale, g_pallet[1], g_lines_cleared);
 
 			pos_y += g_cell_size * 2;
 
-			text_fill(pos_x, pos_y, scale, -1, "SCORE?");
+			text_fill(pos_x, pos_y, scale, g_pallet[1], "SCORE?");
 
 			pos_y += g_cell_size;
 
-			text_fill(pos_x, pos_y, scale, -1, "00000000");
+			text_fill(pos_x, pos_y, scale, g_pallet[1], "00000000");
 
 			pos_y += g_cell_size * 5;
 
-			text_fill(pos_x, pos_y, scale, -1, "next:");
+			text_fill(pos_x, pos_y, scale, g_pallet[1], "next:");
 
 			pos_y += g_cell_size;
 
 			rect_draw(pos_x, pos_y, pos_x + g_cell_size * 4 + g_cell_padding * 3,
-			          pos_y + g_cell_size * 2 + g_cell_padding * 3, g_cell_padding, -1);
+			          pos_y + g_cell_size * 2 + g_cell_padding * 3, g_cell_padding, g_pallet[1]);
 
 			tetrino_draw_preview(pos_x + g_cell_padding * 2, pos_y + g_cell_padding * 2);
 		}
