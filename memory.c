@@ -11,16 +11,17 @@ static size_t g_ptr = 0;
 void *
 mem_alloc(size_t len)
 {
-	const size_t r = g_ptr;
-	g_ptr += len;
+	const size_t new_ptr = g_ptr + len;
 
-	if (g_ptr >= sizeof(g_memory))
+	if (new_ptr < g_ptr || new_ptr >= sizeof(g_memory))
 	{
-		g_ptr = sizeof(g_memory);
 		return 0;
 	}
 
-	return &g_memory[r];
+	const size_t ptr = g_ptr;
+	g_ptr = new_ptr;
+
+	return &g_memory[ptr];
 }
 
 void
